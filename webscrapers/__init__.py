@@ -5,6 +5,7 @@ data acquisition from popular sites.
 
 from wggesuchtde import WGGesuchtDE
 from location import Location
+from api import DATADIR
 
 
-__all__ = ["WGGesuchtDE", "Location"]
+__all__ = ["WGGesuchtDE", "Location", "DATADIR"]

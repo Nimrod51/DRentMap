@@ -10,7 +10,7 @@ To be used by the Scraper API.
 class Location():
 
     # constructor with flexible arguments
-    def __init__(self, **args):
+    def __init__(self, *args):
         # TODO: can information be fetched from a geo API?
         # TODO: which information is the most relevant to scrapers
         self.name = None
