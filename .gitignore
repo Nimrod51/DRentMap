@@ -1,0 +1,6 @@
+
+# exclude directory keeping data
+data
+
+# exclude python temp files
+**.pyc
