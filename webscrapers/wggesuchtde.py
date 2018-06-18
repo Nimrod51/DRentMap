@@ -9,3 +9,6 @@ from api import Scraper
 class WGGesuchtDE(Scraper):
     def __init__(self):
         self.name = "WGGesuchtDE"
+
+    def check(self):
+        Scraper.check(self)

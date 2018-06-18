@@ -4,6 +4,7 @@ data acquisition from popular sites.
 """
 
 from wggesuchtde import WGGesuchtDE
+from location import Location
 
 
-__all__ = ["WGGesuchtDE"]
+__all__ = ["WGGesuchtDE", "Location"]
