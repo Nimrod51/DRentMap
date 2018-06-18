@@ -1,6 +1,7 @@
 
 # exclude directory keeping data
-data
+data/**
+!data/.gitignore
 
 # exclude python temp files
 **.pyc
