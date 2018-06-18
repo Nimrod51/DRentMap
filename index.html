@@ -14,7 +14,10 @@
 	</style>
 </head>
 <body>
+
 <div id="mapid"></div> 
+
+<script src ="districts.geojson"></script>
 <script>
 
 /* OSM Basemap*/
@@ -33,17 +36,35 @@ var map = L.map('mapid', {
 	layers: [streets] /* Default basemaplayer on startup */
 });
 
+
+var myStyle = {
+    "color": "#66ff99",
+    "weight": 5,
+    "opacity": 0.9
+};
+
+function onEachFeature(feature, layer) {
+    if (feature.properties) {
+        layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Name: </b>" + feature.properties.name_stati);
+    }
+}
+
+districtLayer = L.geoJson(districts,{
+	style: myStyle,
+	onEachFeature: onEachFeature
+}).addTo(map);
+
 var baseLayers = {
 			"OpenStreetMap": osm,
 			"Streets": streets
 		};
 
-var ctrl = L.control.layers(baseLayers).addTo(map);
-
-/*
 var overlays = {
-	"Density": density
-};*/
+	"Districts": districtLayer
+};
+
+var ctrl = L.control.layers(baseLayers, overlays).addTo(map);
+
 
 
 </script>
