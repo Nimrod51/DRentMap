@@ -3,8 +3,12 @@ Wrapper classes for the data.
 """
 # TODO: should these classes be moved somewhere else for reusage?
 
+from __future__ import print_function
 import time
 import json
+
+# directory where all data will be stored
+DATADIR = "data/"
 
 
 class Datapoint():
@@ -30,7 +34,7 @@ class Datapoint():
         if filepath[:-5] != ".json" and filepath[:-5] != ".JSON":
             filepath += ".json"
         with open(filepath, "w+") as outf:
-            outf.write(json.dumps(self.asDict()))
+            print(json.dumps(self.asDict()), file=outf)
 
     # make Datapoint form dict
     @staticmethod

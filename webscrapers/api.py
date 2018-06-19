@@ -2,8 +2,7 @@ from __future__ import print_function
 import os
 import json
 import time
-
-DATADIR = "data/"
+from data import DATADIR
 
 
 class Scraper():
@@ -11,10 +10,11 @@ class Scraper():
     An interface, that each web scraper implements
     """
 
-    def __init__(self, location=None):
-        self.name = "ScraperAPI"
+    def __init__(self, location=None, name="ScraperAPI"):
+        self.name = name
         self.location = location
         self.sleepTime = 10
+        self.gendir()
 
     def setLocation(self, location):
         self.location = location
