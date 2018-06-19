@@ -32,16 +32,21 @@ class Datapoint():
         with open(filepath, "w+") as outf:
             outf.write(json.dumps(self.asDict()))
 
-    # load Datapoint form JSON file
+    # make Datapoint form dict
     @staticmethod
-    def load(self, filepath):
-        with open(filepath) as inf:
-            data = json.loads(inf.read())
+    def fromDict(data):
         result = Datapoint()
         result.location = Location(data["location"])
         result.price = float(data["price"])
         result.date = int(data["date"])
         return result
+
+    # load Datapoint form JSON file
+    @staticmethod
+    def load(filepath):
+        with open(filepath) as inf:
+            data = json.loads(inf.read())
+        return Datapoint.fromDict(data)
 
 
 class Location():
