@@ -13,6 +13,7 @@ from lxml import html
 import unicodedata
 import json
 import os
+# from umlaut import replace_german_umlaute
 
 
 class WGGesuchtDE(Scraper):
@@ -20,7 +21,7 @@ class WGGesuchtDE(Scraper):
         Scraper.__init__(self, name="WGGesuchtDE")
         self.pages = pages
 
-    # TODO: deal with all that unicde...
+    # TODO: deal with all that unicode...
     def check(self):
         for page in self.pages:
             # load main page (result list) HTML
@@ -45,17 +46,16 @@ class WGGesuchtDE(Scraper):
                     continue
                 # load ad page HTML
                 r = requests.get(link)
-                print(r.encoding)
-                r.encoding = 'ISO-8859-1'
+                r.encoding = 'utf-8'
                 detailsTree = html.fromstring(r.content)
                 data = Datapoint()
                 try:
                     # extract adress
                     adress = detailsTree.xpath(
                         "//a[contains(@onclick,'map_tab')]/text()")
-                    adress = [s.encode('UTF-8') for s in adress]
-                    adress = " ".join(adress)
-                    adress = " ".join(adress.split())
+                    adress = [s.encode('utf-8') for s in adress]
+                    adress = " ".join((" ".join(adress)).split())
+                    print(adress)
                     data.location = Location(adress)
                     # extract price
                     keyfacts = detailsTree.xpath("//h2/text()")
