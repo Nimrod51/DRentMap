@@ -6,13 +6,14 @@ wg-gesucht.de implementing the Scraper API.
 """
 
 from __future__ import print_function
-from api import Scraper
-from data import Datapoint, Location
+from .api import Scraper
+from .data import Datapoint, Location
 import requests
 from lxml import html
 import unicodedata
 import json
 import os
+from builtins import str
 # from umlaut import replace_german_umlaute
 
 
@@ -49,22 +50,21 @@ class WGGesuchtDE(Scraper):
                 r.encoding = 'utf-8'
                 detailsTree = html.fromstring(r.content)
                 data = Datapoint()
-                try:
-                    # extract adress
-                    adress = detailsTree.xpath(
-                        "//a[contains(@onclick,'map_tab')]/text()")
-                    adress = [s.encode('utf-8') for s in adress]
-                    adress = " ".join((" ".join(adress)).split())
-                    print(adress)
-                    data.location = Location(adress)
-                    # extract price
-                    keyfacts = detailsTree.xpath("//h2/text()")
-                    data.price = int(
-                        "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
-                    # output of datapoint
-                    data.save(os.path.join(self.datadir, str(pageID)))
-                except Exception as e:
-                    print("Flat", i, "failed:", e)
+                # try:
+                # extract adress
+                adress = detailsTree.xpath(
+                    "//a[contains(@onclick,'map_tab')]/text()")
+                adress = [str(s.encode('utf-8'), 'utf-8') for s in adress]
+                adress = " ".join((" ".join(adress)).split())
+                data.location = Location(adress)
+                # extract price
+                keyfacts = detailsTree.xpath("//h2/text()")
+                data.price = int(
+                    "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
+                # output of datapoint
+                data.save(os.path.join(self.datadir, str(pageID)))
+                # except Exception as e:
+                #     print("Flat", i, "failed:", e)
                 # wait to prevent over-polling and print status
                 self.sleep()
                 self.printStatus(i, len(links))
