@@ -4,8 +4,12 @@ data acquisition from popular sites.
 """
 
 from wggesuchtde import WGGesuchtDE
-from location import Location
+from data import Location, Datapoint
 from api import DATADIR
 
 
-__all__ = ["WGGesuchtDE", "Location", "DATADIR"]
+__all__ = [
+           "Location", "Datapoint",
+           "WGGesuchtDE",
+           "DATADIR"
+           ]
