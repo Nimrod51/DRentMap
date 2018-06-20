@@ -2,7 +2,7 @@ from __future__ import print_function
 import os
 import json
 import time
-from data import DATADIR
+from .data import DATADIR
 
 
 class Scraper():
