@@ -61,6 +61,9 @@ class WGGesuchtDE(Scraper):
                 keyfacts = detailsTree.xpath("//h2/text()")
                 data.price = int(
                     "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
+                # TODO: extract URL
+                # TODO: extract size
+                # TODO: save full raw HTML
                 # output of datapoint
                 data.save(os.path.join(self.datadir, str(pageID)))
                 # except Exception as e:
