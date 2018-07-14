@@ -29,6 +29,8 @@ class Scraper():
         self.datadir = os.path.join(DATADIR, self.name)
         if not os.path.exists(self.datadir):
             os.mkdir(self.datadir)
+        if not os.path.exists(os.path.join(self.datadir, "raw/")):
+            os.mkdir(os.path.join(self.datadir, "raw/"))
 
     # get date of last check of the website
     @property

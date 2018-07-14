@@ -19,6 +19,8 @@ class Datapoint():
     def __init__(self, location=None, price=None, date=None):
         self.location = location
         self.price = price
+        self.size = None
+        self.url = None
         self.date = int(time.time()) if date is None else date
 
     # return Datapoint as dict
@@ -26,6 +28,8 @@ class Datapoint():
         return {
             "location": self.location.name,
             "price": self.price,
+            "size": self.size,
+            "url": self.url,
             "date": self.date
         }
 
@@ -51,6 +55,21 @@ class Datapoint():
         with open(filepath) as inf:
             data = json.loads(inf.read())
         return Datapoint.fromDict(data)
+
+
+# a Database keeps multiple Datapoints
+# and can be loaded/saved in various formats
+class Database():
+    def __init__(self):
+        # a list of datapoints
+        self.data = []
+
+    def add(self, datapoint):
+        self.data += [datapoint]
+
+    def asJSON(self):
+        # TODO: implement
+        pass
 
 
 class Location():

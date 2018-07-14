@@ -21,8 +21,8 @@ class WGGesuchtDE(Scraper):
     def __init__(self, pages=[]):
         Scraper.__init__(self, name="WGGesuchtDE")
         self.pages = pages
+        self.gendir()
 
-    # TODO: deal with all that unicode...
     def check(self):
         for page in self.pages:
             # load main page (result list) HTML
@@ -48,9 +48,12 @@ class WGGesuchtDE(Scraper):
                 # load ad page HTML
                 r = requests.get(link)
                 r.encoding = 'utf-8'
+                # save raw HTML for future use
+                with open(os.path.join(self.datadir, "raw/", str(pageID)+".html"), "w+") as f:
+                    print(r.content, file=f)
                 detailsTree = html.fromstring(r.content)
                 data = Datapoint()
-                # try:
+                data.url = page
                 # extract adress
                 adress = detailsTree.xpath(
                     "//a[contains(@onclick,'map_tab')]/text()")
@@ -59,11 +62,10 @@ class WGGesuchtDE(Scraper):
                 data.location = Location(adress)
                 # extract price
                 keyfacts = detailsTree.xpath("//h2/text()")
+                data.size = int(keyfacts[0].split("m")[0].split(" ")[-1])
                 data.price = int(
                     "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
                 # TODO: extract URL
-                # TODO: extract size
-                # TODO: save full raw HTML
                 # output of datapoint
                 data.save(os.path.join(self.datadir, str(pageID)))
                 # except Exception as e:
