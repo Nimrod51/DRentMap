@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/leaflet.css" />
 	<script src="js/leaflet.js"></script>
+	<script src="js/leaflet-heat.js"></script>
 	<script src="js/jquery-3.3.1.min.js"></script>
 	<style>
 		#mapid {
@@ -16,8 +17,8 @@
 <body>
 
 <div id="mapid"></div> 
-
-<script src ="districts.geojson"></script>
+<script src ="data/districts.geojson"></script>
+<script src ="data/WGGesuchtDE/result.geojson"></script>
 <script>
 
 /* OSM Basemap*/
@@ -37,21 +38,50 @@ var map = L.map('mapid', {
 });
 
 
-var myStyle = {
+var districtStyle = {
     "color": "#66ff99",
     "weight": 5,
     "opacity": 0.9
 };
 
-function onEachFeature(feature, layer) {
+function onEachFeature1(feature, layer) {
     if (feature.properties) {
         layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Name: </b>" + feature.properties.name_stati);
     }
 }
 
+function onEachFeature2(feature, layer) {
+    if (feature.properties) {
+		var d = new Date(0);
+		d.setUTCSeconds(feature.properties.date);
+        layer.bindPopup("<b>URL: </b>" + '<a href=\"' + feature.properties.url + '\">Link</a>' + "<br>" + "<b>Date Obtained: </b>" + d.toLocaleString() + "<br>" + "<b>Price: </b>" + feature.properties.price + '\u20AC' + "<br>"+ "<b>Address: </b>" + feature.properties.location);
+    }
+}
+
+function createHeatLayer(){
+	var points = [];
+	
+
+	for (i=0; i< result.features.length; i++) {
+		coords = result.features[i].geometry.coordinates;
+		var latlng=[];
+		latlng.push(coords[1].toLocaleString())
+		latlng.push(coords[0].toLocaleString())
+		latlng.push(1) //result.features[i].proper.toLocaleString()ties.price) //Add weight for points
+		points.push(latlng);
+	}
+	density = L.heatLayer(points, {radius: 110}).addTo(map);
+	ctrl.addOverlay(density,"Density");
+
+}
+
 districtLayer = L.geoJson(districts,{
-	style: myStyle,
-	onEachFeature: onEachFeature
+	style: districtStyle,
+	onEachFeature: onEachFeature1
+}).addTo(map);
+
+pointLayer = L.geoJson(result,{
+	onEachFeature: onEachFeature2
 }).addTo(map);
 
 var baseLayers = {
@@ -60,12 +90,13 @@ var baseLayers = {
 		};
 
 var overlays = {
-	"Districts": districtLayer
+	"Districts": districtLayer,
+	"Locations": pointLayer
 };
 
 var ctrl = L.control.layers(baseLayers, overlays).addTo(map);
 
-
+window.onload = createHeatLayer();
 
 </script>
 
