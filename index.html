@@ -18,7 +18,7 @@
 <body>
 
 <div id="mapid"></div> 
-<script src ="data/districts.geojson"></script>
+<script src ="districts.geojson"></script>
 <script src ="data/WGGesuchtDE/result.geojson"></script>
 <script>
 
@@ -108,8 +108,7 @@ function createChoropleth(){
 		if (x.features.length>0){ //Points intersect one of the districts polygon
 			var sum = 0;
 			for (j=0; j<x.features.length; j++) {
-				sum+=x.features[j].properties.price
-				//districts.features[i].properties.price =x.features[j].properties.price	
+				sum+=x.features[j].properties.price	
 			}
 		var avg = Math.round(sum/x.features.length);
 		districts.features[i].properties.price = avg;
