@@ -68,8 +68,10 @@ var districtStyle = {
 };
 
 function onEachFeature1(feature, layer) {
-    if (feature.properties) {
-        layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Name: </b>" + feature.properties.name_stati + "<br>" +  "<b>Avg Price: </b>" + feature.properties.price);
+    if (feature.properties && feature.properties.price != undefined) {
+        layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Name: </b>" + feature.properties.name_stati + "<br>" +  "<b>Avg Price: </b>" + feature.properties.price + '\u20AC');
+    } else {
+    	layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Name: </b>" + feature.properties.name_stati + "<br>" +  "<b>Avg Price: </b>" + "<font color='red'> No Data </font>");
     }
 }
 
@@ -77,7 +79,7 @@ function onEachFeature2(feature, layer) {
     if (feature.properties) {
 		var d = new Date(0);
 		d.setUTCSeconds(feature.properties.date);
-        layer.bindPopup("<b>URL: </b>" + '<a href=\"' + feature.properties.url + '\">Link</a>' + "<br>" + "<b>Date Obtained: </b>" + d.toLocaleString() + "<br>" + "<b>Price: </b>" + feature.properties.price + '\u20AC' + "<br>"+ "<b>Address: </b>" + feature.properties.location + "<br>"+ feature.geometry.coordinates);
+        layer.bindPopup("<b>URL: </b>" + '<a href=\"' + feature.properties.url + '\">Link</a>' + "<br>" + "<b>Date Obtained: </b>" + d.toLocaleString() + "<br>" + "<b>Price: </b>" + feature.properties.price + '\u20AC' + "<br>"+ "<b>Address: </b>"+ feature.properties.location)// + "<br>"+ feature.geometry.coordinates);
     }
 }
 
@@ -95,7 +97,7 @@ function createHeatLayer(){
 	}
 	density = L.heatLayer(points, {radius: 110}).addTo(map);
 	ctrl.addOverlay(density,"Density");
-	
+	createChoropleth()
 }
 
 
@@ -109,7 +111,7 @@ function createChoropleth(){
 				sum+=x.features[j].properties.price
 				//districts.features[i].properties.price =x.features[j].properties.price	
 			}
-		var avg = sum/x.features.length;
+		var avg = Math.round(sum/x.features.length);
 		districts.features[i].properties.price = avg;
 		}
 	}
@@ -118,6 +120,7 @@ function createChoropleth(){
 	style: style,// districtStyle,
 	onEachFeature: onEachFeature1
 	}).addTo(map);
+	ctrl.addOverlay(districtLayer,"Average Rent Price");
 
 }
 
