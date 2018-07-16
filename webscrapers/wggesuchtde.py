@@ -51,29 +51,39 @@ class WGGesuchtDE(Scraper):
                 # save raw HTML for future use
                 with open(os.path.join(self.datadir, "raw/", str(pageID)+".html"), "w+") as f:
                     print(r.content, file=f)
-                detailsTree = html.fromstring(r.content)
-                # create new datapoint and save url
                 data = Datapoint()
                 data.url = link
-                # extract adress
-                adress = detailsTree.xpath(
-                    "//a[contains(@onclick,'map_tab')]/text()")
-                adress = [str(s.encode('utf-8'), 'utf-8') for s in adress]
-                adress = " ".join((" ".join(adress)).split())
-                data.location = Location(adress)
-                # extract price
-                keyfacts = detailsTree.xpath("//h2/text()")
-                data.size = int(keyfacts[0].split("m")[0].split(" ")[-1])
-                data.price = int(
-                    "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
-                # output of datapoint
-                data.save(os.path.join(self.datadir, str(pageID)))
-                # except Exception as e:
-                #     print("Flat", i, "failed:", e)
+                self.parse(r.content, pageID, data)
                 # wait to prevent over-polling and print status
                 self.sleep()
                 self.printStatus(i, len(links))
                 i += 1
 
-        # call parent to update lastChecked timestamp
-        Scraper.check(self)
+            # call parent to update lastChecked timestamp
+            Scraper.check(self)
+
+    # parse data from given HTML text
+    def parse(self, text, pageID, data=Datapoint()):
+        detailsTree = html.fromstring(text)
+        # extract adress
+        adress = detailsTree.xpath(
+            "//a[contains(@onclick,'map_tab')]/text()")
+        adress = [str(s.encode('utf-8'), 'utf-8') for s in adress]
+        adress = " ".join((" ".join(adress)).split())
+        data.location = Location(adress)
+        # extract price
+        keyfacts = detailsTree.xpath("//h2/text()")
+        data.size = int(keyfacts[0].split("m")[0].split(" ")[-1])
+        data.price = int(
+            "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
+        # output of datapoint
+        data.save(os.path.join(self.datadir, str(pageID)))
+        # except Exception as e:
+        #     print("Flat", i, "failed:", e)
+
+    # regenerate
+    def reparseRawHTML(self):
+        for rd in os.listdir(os.path.join(self.datadir, "raw/")):
+            with open(os.path.join(self.datadir, "raw/", rd)) as f:
+                print(os.path.join(self.datadir, "raw/", rd))
+                self.parse(f.read(), rd[:-5])

@@ -12,4 +12,6 @@ scraper.setLocation(ms)
 
 scraper.check()
 
+# scraper.reparseRawHTML()
+
 print(scraper.lastChecked)
