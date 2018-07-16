@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>DRentMap</title>
+	<h1>DRentMap</h1>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/leaflet.css" />
@@ -13,6 +14,9 @@
 		#mapid {
 			height: 600px;
 		}
+		h1 { 
+			color: #111; 
+			font-family: 'Helvetica Neue', sans-serif; font-size: 30px; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
 	</style>
 </head>
 <body>
@@ -40,10 +44,10 @@ var map = L.map('mapid', {
 
 
 function getColor(price) {
-    return price > 400 ? '#08519c' :
-        price > 350 ? '#3182bd' :
-        price > 300 ? '#6baed6' :
-        price > 200 ? '#bdd7e7' :
+	//var intervals = calculateIntervals(locations,3);
+    return price > 549 ? '#3182bd' :
+        price > 323 ? '#6baed6' :
+        price > 210 ? '#bdd7e7' :
         price >= 0 ? '#ffeda0' :
         '#eff3ff';
 }
@@ -69,9 +73,9 @@ var districtStyle = {
 
 function onEachFeature1(feature, layer) {
     if (feature.properties && feature.properties.price != undefined) {
-        layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Name: </b>" + feature.properties.name_stati + "<br>" +  "<b>Avg Price: </b>" + feature.properties.price + '\u20AC');
+        layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Stadtteil : </b>" + feature.properties.name_stati + "<br>" +  "<b>Avg Price: </b>" + feature.properties.price + '\u20AC');
     } else {
-    	layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Name: </b>" + feature.properties.name_stati + "<br>" +  "<b>Avg Price: </b>" + "<font color='red'> No Data </font>");
+    	layer.bindPopup("<b>Stadtbezirk: </b>" + feature.properties.stadtbezir + "<br>" + "<b>Stadtteil : </b>" + feature.properties.name_stati + "<br>" +  "<b>Avg Price: </b>" + "<font color='red'> No Data </font>");
     }
 }
 
@@ -84,27 +88,53 @@ function onEachFeature2(feature, layer) {
 }
 
 var points = [];
+/* 
+A function to calculate the density (heat) layer
+*/
 function createHeatLayer(){
-	
-	
-	for (i=0; i< result.features.length; i++) {
-		coords = result.features[i].geometry.coordinates;
+
+	for (i=0; i< locations.features.length; i++) {
+		coords = locations.features[i].geometry.coordinates;
 		var latlng=[];
 		latlng.push(coords[1].toLocaleString())
 		latlng.push(coords[0].toLocaleString())
-		latlng.push(1) //result.features[i].proper.toLocaleString()ties.price) //Add weight for points
+		latlng.push(1) //Add weight for points
 		points.push(latlng);
 	}
 	density = L.heatLayer(points, {radius: 110}).addTo(map);
 	ctrl.addOverlay(density,"Density");
 	createChoropleth()
 }
+/* 
+A function to calculate EQUAL intervals based on the 'locations' variable
+*/
+function calculateIntervals(locations,class_num) {
+	var prices = new Array;
+	for (i=0;i<locations.features.length;i++){
+		prices.push(locations.features[i].properties.price)
+	}
+	var max = Math.max.apply(Math, prices);
+	var min = Math.min.apply(Math, prices);
+	var step = Math.round((max-min)/class_num);
+
+	var intervals=[]
+	intervals.push(min)
+	while (intervals[intervals.length-1]<max-1){
+		intervals.push(intervals[intervals.length-1]+step)
+		step+=step
+	}
+	console.log(intervals)
 
 
+}
+
+/* 
+Function to create the choropleth average rent price layer
+*/
 function createChoropleth(){
 	count=0
 	for (i=0; i<districts.features.length; i++) {
-		x=turf.pointsWithinPolygon(result,districts.features[i]);
+		x=turf.pointsWithinPolygon(locations,districts.features[i]);
 		if (x.features.length>0){ //Points intersect one of the districts polygon
 			var sum = 0;
 			for (j=0; j<x.features.length; j++) {
@@ -119,12 +149,12 @@ function createChoropleth(){
 	style: style,// districtStyle,
 	onEachFeature: onEachFeature1
 	}).addTo(map);
-	ctrl.addOverlay(districtLayer,"Average Rent Price");
+	ctrl.addOverlay(districtLayer,"Avg Rent Price (By District)");
 
 }
 
 
-pointLayer = L.geoJson(result,{
+pointLayer = L.geoJson(locations,{
 	onEachFeature: onEachFeature2
 }).addTo(map);
 
