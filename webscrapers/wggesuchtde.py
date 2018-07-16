@@ -52,8 +52,9 @@ class WGGesuchtDE(Scraper):
                 with open(os.path.join(self.datadir, "raw/", str(pageID)+".html"), "w+") as f:
                     print(r.content, file=f)
                 detailsTree = html.fromstring(r.content)
+                # create new datapoint and save url
                 data = Datapoint()
-                data.url = page
+                data.url = link
                 # extract adress
                 adress = detailsTree.xpath(
                     "//a[contains(@onclick,'map_tab')]/text()")
@@ -65,7 +66,6 @@ class WGGesuchtDE(Scraper):
                 data.size = int(keyfacts[0].split("m")[0].split(" ")[-1])
                 data.price = int(
                     "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
-                # TODO: extract URL
                 # output of datapoint
                 data.save(os.path.join(self.datadir, str(pageID)))
                 # except Exception as e:
