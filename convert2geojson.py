@@ -4,8 +4,6 @@ import glob
 from geopy.geocoders import Nominatim
 
 source_dir=".\data\WGGesuchtDE\\"
-
-
 result = []
 for f in glob.glob(source_dir + "*.json"):
     with open(f, "rb") as infile:
@@ -24,22 +22,34 @@ def formatAddress(address):
 #Iterate over each result and geocode the address
 geolocator = Nominatim(timeout=3)
 features=[]
-count=1
+successCount=0
+errorCount=0
 
-for r in result:
-    address = r['location']
-    xy = geolocator.geocode(formatAddress(address))
-    
-    if xy is not None:
-        feat = Feature(geometry=Point((xy.point[1],xy.point[0])))
-        feat.properties = r
-        features.append(feat)
-    else:
-        print ("No result for: ", r['location'])
-        count+=1
-print ('total NOT geocoded: ', count)
+try:
+
+    for r in result:
+        address = r['location']
+        xy = geolocator.geocode(formatAddress(address))
+        
+        if xy is not None:
+            feat = geojson.Feature(geometry=geojson.Point((xy.point[1],xy.point[0])))
+            feat.properties = r
+            features.append(feat)
+            successCount+=1
+        else:
+            print ("No result for: ", r['location'])
+            errorCount+=1
+
+    print ('total SUCCESSFULY geocoded: ', successCount)        
+    print ('total NOT geocoded: ', errorCount)
+
+except:
+    "Too many requests to Nominatim, try again later"
+
 
 #Write result to geojson file
-fc = FeatureCollection(features)
+fc = geojson.FeatureCollection(features)
+variableStr='var locations='.strip('"')
 with open(source_dir + "\\result.geojson", "w") as outfile:
-     geojson.dump(fc, outfile)
+    json.dump(variableStr,outfile)
+    geojson.dump(fc, outfile)

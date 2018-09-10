@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-"""
 
 """
-A web scraper for the german flat search engine website
+A web scraper for the German flat search engine website
 wg-gesucht.de implementing the Scraper API.
 """
 
