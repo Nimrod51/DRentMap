@@ -14,4 +14,4 @@ Run the following scripts in Python 3:
 Open index.html
 
 ## Preview
-![alt text](https://imgur.com/iebPwqB)
+![alt text](https://i.imgur.com/iebPwqB.png)
