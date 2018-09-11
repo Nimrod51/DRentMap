@@ -30,7 +30,7 @@ try:
     for r in result:
         address = r['location']
         xy = geolocator.geocode(formatAddress(address))
-        
+
         if xy is not None:
             feat = geojson.Feature(geometry=geojson.Point((xy.point[1],xy.point[0])))
             feat.properties = r
@@ -40,7 +40,7 @@ try:
             print ("No result for: ", r['location'])
             errorCount+=1
 
-    print ('total SUCCESSFULY geocoded: ', successCount)        
+    print ('total SUCCESSFULY geocoded: ', successCount)
     print ('total NOT geocoded: ', errorCount)
 
 except:
@@ -51,5 +51,5 @@ except:
 fc = geojson.FeatureCollection(features)
 variableStr='var locations='.strip('"')
 with open(source_dir + "\\result.geojson", "w") as outfile:
-    json.dump(variableStr,outfile)
+    outfile.write(variableStr)
     geojson.dump(fc, outfile)
