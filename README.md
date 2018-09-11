@@ -9,9 +9,9 @@ This application maps the rent in various cities.
 ## Installation
 Run the following scripts in Python 3:
 
-1) getdata.py
-2) convert2geojson.py3
-3) open index.html
+1) Run getdata.py
+2) Run convert2geojson.py3
+3) Open index.html
 
 ## Preview
 ![alt text](https://i.imgur.com/iebPwqB.png)
