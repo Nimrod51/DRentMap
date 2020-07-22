@@ -64,22 +64,23 @@ class WGGesuchtDE(Scraper):
 
     # parse data from given HTML text
     def parse(self, text, pageID, data=Datapoint()):
-        detailsTree = html.fromstring(text)
-        # extract adress
-        adress = detailsTree.xpath(
-            "//a[contains(@onclick,'map_tab')]/text()")
-        adress = [str(s.encode('utf-8'), 'utf-8') for s in adress]
-        adress = " ".join((" ".join(adress)).split())
-        data.location = Location(adress)
-        # extract price
-        keyfacts = detailsTree.xpath("//h2/text()")
-        data.size = int(keyfacts[0].split("m")[0].split(" ")[-1])
-        data.price = int(
-            "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
-        # output of datapoint
-        data.save(os.path.join(self.datadir, str(pageID)))
-        # except Exception as e:
-        #     print("Flat", i, "failed:", e)
+        try:
+            detailsTree = html.fromstring(text)
+            # extract adress
+            adress = detailsTree.xpath(
+                "//a[contains(@onclick,'map_tab')]/text()")
+            adress = [str(s.encode('utf-8'), 'utf-8') for s in adress]
+            adress = " ".join((" ".join(adress)).split())
+            data.location = Location(adress)
+            # extract price
+            keyfacts = detailsTree.xpath("//h2/text()")
+            data.size = int(keyfacts[0].split("m")[0].split(" ")[-1])
+            data.price = int(
+                "".join(_ for _ in keyfacts[1].split("\u20ac")[0] if _ in "1234567890"))
+            # output of datapoint
+            data.save(os.path.join(self.datadir, str(pageID)))
+        except Exception as e:
+            print("Flat", self.i, "failed:", e)
 
     # regenerate
     def reparseRawHTML(self):

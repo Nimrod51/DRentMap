@@ -13,7 +13,7 @@ class Scraper():
     def __init__(self, location=None, name="ScraperAPI"):
         self.name = name
         self.location = location
-        self.sleepTime = 10
+        self.sleepTime = 5
         self.gendir()
 
     def setLocation(self, location):
